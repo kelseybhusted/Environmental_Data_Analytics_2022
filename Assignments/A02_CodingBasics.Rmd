@@ -1,6 +1,6 @@
 ---
 title: "Assignment 2: Coding Basics"
-author: "Student Name"
+author: "Kelsey"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -32,11 +32,24 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 
 ```{r}
 #1. 
+#creating a sequence from 1 to 10 that increases by 4
+seq(1, 100, 4)  # from, to, by
+#Renaming Sequence
+A02_sequence <- seq(1, 100, 4)
+A02_sequence #run to check solution
 
-#2. 
+#2.
+#finding the mean and median of the sequence produced above
+mean(A02_sequence)
+median(A02_sequence)
 
 #3. 
-
+#determining whether the mean is greater than the median
+mean(A02_sequence) > median(A02_sequence)
+#determining whether the median is greater than the mean
+mean(A02_sequence) > median(A02_sequence)
+#determining whether the median is equal to the mean
+mean(A02_sequence) == median(A02_sequence)
 ```
 
 ## Basics Day 2
@@ -50,21 +63,80 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 8. Label the columns of your data frame with informative titles.
 
 ```{r}
+#5
+#Create a series of vectors, each with four components: names, test scores,P/F
+#vector 1; Character Vector
+name_vect <- c("Natalie", "Michael", "Valerie", "Maddie")
+name_vect 
+#vector 2; Numeric Vector
+test_score_vect <- c(55, 43, 97, 36)
+test_score_vect
+#vector 3; Logical Vector
+pass_fail_vect <- c(TRUE, FALSE, TRUE, FALSE)
+pass_fail_vect
 
+#identifying who specifically passes the test and identifying their specific scores
+test_score_vect[c(TRUE, FALSE, TRUE, FALSE)]
+name_vect[c(TRUE, FALSE, TRUE, FALSE)]
+#another way to see which specific scores are considers as passing
+test_score_vect >= 50
+
+#6 Completed above!
+
+#7
+#create a data frame for the information above
+grade_analysis <- data.frame(Students = c("Natalie", "Michael", "Valerie", "Maddie"),
+                            Test_scores = c(55, 43, 97, 36),
+                            Pass_fail = c(TRUE, FALSE, TRUE, FALSE))
+
+grade_analysis
+
+#8
+#name the columns
+#Completed above!
 ```
 
 9. QUESTION: How is this data frame different from a matrix?
 
-> Answer: 
+> Answer: A data frame is more general than a matrix. In a data frame, while the list of vectors must be equal in length, the vectors can be in different modes (i.e., numbers, characters, etc.). In contrast, a matrix must contain the same type of data (i.e., in the same mode) in addition to containing vectors that are equal in length.
 
 10. Create a function with an if/else statement. Your function should determine whether a test score is a passing grade of 50 or above (TRUE or FALSE). You will need to choose either the `if` and `else` statements or the `ifelse` statement. Hint: Use `print`, not `return`. The name of your function should be informative.
 
 11. Apply your function to the vector with test scores that you created in number 5. 
 
 ```{r}
+#Using 'if' and 'else' method
+passing_grades_v1 <- function(x) {
+  if(x > 50) {
+    x = TRUE
+  }
+  else {
+    x = FALSE
+  }
+}
+Natalie_results_v1 <- passing_grades_v1(55); Natalie_results_v1
+Michael_results_v1 <- passing_grades_v1(43); Michael_results_v1
+Valerie_results_v1 <- passing_grades_v1(97); Valerie_results_v1
+Maddie_results_v1 <- passing_grades_v1(36); Maddie_results_v1
 
+#Using 'ifelse' statement version 1
+grades <-c(55, 43, 97, 36)
+ifelse(grades>50, "PASS", "FAIL") #log_exp, if TRUE, if FALSE
+
+
+#Using 'ifelse' statement version 2
+passing_grades_v2 <- function(x){
+  ifelse(x>50, "PASS", "FAIL") #log_exp, if TRUE, if FALSE
+  
+}
+
+
+Natalie_results_v2 <- passing_grades_v2(55); Natalie_results_v2
+Michael_results_v2 <- passing_grades_v2(43); Michael_results_v2
+Valerie_results_v2 <- passing_grades_v2(97); Valerie_results_v2
+Maddie_results_v2 <- passing_grades_v2(36); Maddie_results_v2
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: 
+> Answer: Technically both options can work but the 'ifelse' statement is far more efficient than the 'if' and 'else' version with respect to vectors. Moreover, the 'ifelse' statement is intended for vector lengths > 1. Meanwhile, the 'if' and 'else' statement is designed for items that have a length of 1.

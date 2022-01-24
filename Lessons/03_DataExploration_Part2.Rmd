@@ -26,6 +26,7 @@ Why is data exploration our first step in analyzing a dataset? What information 
 getwd()
 
 # 2. Load packages
+install.packages("tidyverse")
 library(tidyverse)
 
 # 3. Import datasets
