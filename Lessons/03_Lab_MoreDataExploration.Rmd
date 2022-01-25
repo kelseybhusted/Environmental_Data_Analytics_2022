@@ -48,10 +48,12 @@ matrix3 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE, # return after comma c
                   dimnames = list(c("uno", "dos", "tres", "cuatro", "cinco"), 
                                   c("un", "deux", "trois", "cat"))) #
 
-matrix1[4, ] #
-matrix1[ , 3] #
-matrix1[c(12, 14)] #
-matrix1[c(12:14)] #
+matrix3
+
+matrix1[4, ] #presents 4th row in matrix1
+matrix1[ , 3] #presents the 3rd column in matrix1
+matrix1[c(12, 14)] #presents 12 and 14
+matrix1[c(12:14)] #presents a range 12 to 14 in matrix1
 matrix1[2:4, 1:3] #
 
 cells <- c(1, 26, 24, 68)
@@ -66,14 +68,15 @@ list1 <- list(name = "Maria", mynumbers = vector1, mymatrix = matrix1, age = 5.3
 list1[[2]]
 
 # Data Frames ----
-d <- c(1, 2, 3, 4) # What type of vector?
-e <- c("red", "white", "red", NA) # What type of vector?
-f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector?
+d <- c(1, 2, 3, 4) # What type of vector? Numerical
+e <- c("red", "white", "red", NA) # What type of vector? Character
+f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector? Logical
 dataframe1 <- data.frame(d,e,f) #
+dataframe1
 names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # 
 
-dataframe1[1:2,] # 
-dataframe1[c("ID","Passed")] # 
+dataframe1[1:2,] # shows only rows 1 and 2
+dataframe1[c("ID","Passed")] #shows ID and Passed columns only
 dataframe1$ID
 
 ```
@@ -94,23 +97,45 @@ Find a ten-day forecast of temperatures (Fahrenheit) for Durham, North Carolina.
 
 ```{r}
 
+high_tempF <- c(53, 45, 66, 36, 57, 42, 39, 55, 58, 60)
+
+low_tempF <- c(30, 27, 25, 26, 35, 23, 27, 31, 20, 22)
 ```
 
 Now, create two additional vectors that include the ten-day forecast for the high and low temperatures in Celsius. Use a function to create the two new vectors from your existing ones in Fahrenheit.
 
 ```{r}
 
+conversion_F_to_C <- function(x) {
+  (x-32)/1.8
+}
+
+high_tempC <- conversion_F_to_C(high_tempF)
+high_tempC
+
+low_tempC <- conversion_F_to_C(low_tempF)
+low_tempC
+
 ```
 
 Combine your four vectors into a data frame and add informative column names.
 
 ```{r}
+dataframe_temps <- data.frame(high_tempF, high_tempC, low_tempF, low_tempC)
+dataframe_temps
+names(dataframe_temps) <- c("High Temps. F", "High Temps. C", "Low Temps. F", "Low Temps. C"); View(dataframe_temps)
 
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
 
 ```{r}
+summary(dataframe_temps) #summary statistics for entire data frame
+summary(dataframe_temps$`High Temps. F`) #summary statistics for a single column
+
+
+sd(dataframe_temps$`High Temps. F`)
+
 
 ```
 
@@ -134,9 +159,9 @@ Remember formatting of dates in R:
 # (code must be uncommented)
 today <- Sys.Date()
 format(today, format = "%B")
-#format(today, format = "")
-#format(today, format = "")
-#format(today, format = "")
+format(today, format = "%m")
+format(today, format = "%Y")
+format(today, format = "%d")
 
 ```
 
