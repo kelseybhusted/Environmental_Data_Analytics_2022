@@ -1,0 +1,95 @@
+---
+title: "Assignment 3: Data Exploration"
+author: "Kelsey Husted, Section 1"
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## OVERVIEW
+
+This exercise accompanies the lessons in Environmental Data Analytics on Data Exploration. 
+
+## Directions
+1. Change "Student Name, Section #" on line 3 (above) with your name and section number.
+2. Work through the steps, **creating code and output** that fulfill each instruction.
+3. Be sure to **answer the questions** in this assignment document.
+4. When you have completed the assignment, **Knit** the text and code into a single PDF file.
+5. After Knitting, submit the completed exercise (PDF file) to the dropbox in Sakai. Add your last name into the file name (e.g., "FirstLast_A03_DataExploration.Rmd") prior to submission.
+
+The completed exercise is due on <>.
+
+
+## Set up your R session
+
+1. Check your working directory, load necessary packages (tidyverse), and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. **Be sure to add the `stringsAsFactors = TRUE` parameter to the function when reading in the CSV files.**
+
+```{r setup, include=FALSE}
+getwd()
+
+library(tidyverse)
+
+Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", stringsAsFactors = TRUE)
+
+Neonics <- read.csv("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv", stringsAsFactors = TRUE)
+```
+
+## Learn about your system
+
+2. The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicologoy of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information. 
+
+> Answer: Since ecotoxicology involves studying the effects of toxic chemicals/agents on organisms, once might be interested in understanding how effective neonicotinoids are on different types of insects with respect to the agriculture industry. Additionally, a researcher/student might be interested in studying the long-term effects associated exposure to neonicotinoids in surrounding systems.
+
+3. The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information. 
+
+> Answer: Litter and woody debris that fall onto the ground in forests are considered a nutrient source since the litter/debris decomposes and releases organic compounds into the soils of the surrounding environment. Additionally, litter and woody debris sampling provides information about plant functional groups within the sampling areas.
+
+4. How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here: 
+
+> Answer: 
+* 1) The placement of traps within plots should be targeted or randomized depending on the surrounding vegetation. Sites with >50% aerial cover of wood vegetation will have randomized placement while sites with <50% cover will have targeted trap placements. 
+* 2) Ground traps are sampled once per year. Meanwhile, the sampling frequency for elevated traps is dependent on the vegetation present at that site. For instance, deciduous forest sites require frequent sampling while evergreen sites require infrequent sampling throughout the year.
+* 3) Sampling may be discontinued for up to 6 months during the dormant season for sites with deciduous vegetation and/or limited access during the winter months.
+
+
+
+## Obtain basic summaries of your data (Neonics)
+
+5. What are the dimensions of the dataset?
+
+```{r}
+dim(Neonics)
+dim(Litter)
+```
+6. Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?
+
+```{r}
+summary(Neonics$Effect)
+
+#Effects: Accumulation, Avoidance, Feeding Behavior, Morphology, Genetics, Mortality, Behavior, Growth, Physiology, Biochemistry, Histology, Population, Cell(s), Hormone(s), Reproduction, Development, Immunological, Enzyme(s), Intoxication
+#Most Common Effects: Mortality and Population
+```
+
+> Answer: Studing the effects, which are identified above, of neonicotinoid on insects is extremely important to better understand the effectivemness of the neonicotinoid in the context of protecting agricultural produce quality from insects.
+
+7. Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
+```{r}
+summary(Neonics$Species.Common.Name, decreasing = TRUE)
+
+#Six most commonly studied species in the dataset: Honey Bee, Parasitic Wasp, Buff Tailed Bumblebee, Carniolan Honey Bee, Bumble Bee, and Italian Honeybee
+```
+
+> Answer: The six most commonly studies species  include a variety of bee species and one closely related wasp species that are listed in the code located above. Bees play a critical tole in agricultural systems by providing pollination for many crops. Consequently, pesticide effects need to be studied since they can affect bee health and past exposure can carry over to future generations.
+
+8. Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
+
+```{r}
+class(Neonics$Conc.1..Author.) # The Con.1..Author is classified as factors in the dataset.
+
+```
+> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variable. Therefore, Conc.1..Author cannot be classified as numerical.
+
+
+
+## Explore your data graphically (Neonics)
+
+9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
