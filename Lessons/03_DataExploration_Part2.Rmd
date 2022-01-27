@@ -30,7 +30,7 @@ install.packages("tidyverse")
 library(tidyverse)
 
 # 3. Import datasets
-USGS.flow.data <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv")
+USGS.flow.data <- read.csv("./Data/USGS_Site02085000_Flow_Processed.csv")
 
 #View(USGS.flow.data)
 # Alternate option: click on data frame in Environment tab
@@ -101,6 +101,7 @@ ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "darkgray") +
   geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
   scale_x_continuous(limits = c(0, 10))
+
 
 #
 ggplot(USGS.flow.data) +

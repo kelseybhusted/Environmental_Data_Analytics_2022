@@ -69,7 +69,7 @@ summary(Neonics$Effect)
 #Most Common Effects: Mortality and Population
 ```
 
-> Answer: Studing the effects, which are identified above, of neonicotinoid on insects is extremely important to better understand the effectivemness of the neonicotinoid in the context of protecting agricultural produce quality from insects.
+> Answer: Studing the effects of neonicotinoid on insects is extremely important to better understand the effectiveness of the neonicotinoid in the context of protecting agricultural produce quality from pests. Additionally, studying the effects of the insecticide on different insect species can help researchers target specific pests and avoid other insects that may be beneficial or unrelated to agriculture.
 
 7. Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
 ```{r}
@@ -78,7 +78,7 @@ summary(Neonics$Species.Common.Name, decreasing = TRUE)
 #Six most commonly studied species in the dataset: Honey Bee, Parasitic Wasp, Buff Tailed Bumblebee, Carniolan Honey Bee, Bumble Bee, and Italian Honeybee
 ```
 
-> Answer: The six most commonly studies species  include a variety of bee species and one closely related wasp species that are listed in the code located above. Bees play a critical tole in agricultural systems by providing pollination for many crops. Consequently, pesticide effects need to be studied since they can affect bee health and past exposure can carry over to future generations.
+> Answer: The six most commonly studied species  include a variety of bee species and one closely related wasp species that are listed in the code located above. Bees play a critical role in the agricultural realm by providing pollination for many crops. Consequently, pesticide effects need to be studied since they can adversely affect bee health with past exposure can carrying over to future generations.
 
 8. Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 
@@ -86,10 +86,81 @@ summary(Neonics$Species.Common.Name, decreasing = TRUE)
 class(Neonics$Conc.1..Author.) # The Con.1..Author is classified as factors in the dataset.
 
 ```
-> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variable. Therefore, Conc.1..Author cannot be classified as numerical.
+> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variable. Therefore, Conc.1..Author cannot be classified as numerical or categorical.
 
 
 
 ## Explore your data graphically (Neonics)
 
 9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
+```{r}
+ggplot(Neonics) +
+  geom_freqpoly(aes(x = Publication.Year), bins = 50, color = "darkgreen")
+```
+
+10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
+```{r}
+ggplot(Neonics) +
+  geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 50) +
+  theme(legend.position = "bottom")
+```
+
+Interpret this graph. What are the most common test locations, and do they differ over time?
+
+> Answer: According to the graph displayed above, the most common test locations include the lab and natural field. While tests conducted within the natural field seem to initially increase and then noticeably decrease with time, tests performed in the lab display more of a general increase over time. 
+
+11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
+```{r}
+ggplot(Neonics, aes(x = Endpoint)) +
+  geom_bar() +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+```
+
+> Answer: The two most common endpoints include NOEL and LOEL. NOEL represents no-observable-effect-level which indicates that the highest dose (i.e., concentration) produces effects that are not significantly different from the responses of the controls. LOEL is an acronym for lowest-observable-effect-level where the lowest dose (i.e., concentration) produces effects that are significantly different from the responses of the controls.
+
+## Explore your data (Litter)
+
+12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018. 
+```{r}
+class(Litter$collectDate) #the class is factor
+
+Litter$collectDate <- as.Date(Litter$collectDate, format = "%m-%d-%Y")
+class(Litter$collectDate)
+
+unique(Litter$collectDate)
+
+```
+13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
+
+```{r}
+#There are 12 unique plots samples at Niwot Ridge
+unique(Litter$plotID)
+```
+
+> Answer: 
+
+14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
+```{r}
+ggplot(Litter) +
+  geom_bar(aes(x = functionalGroup), color = "cyan4") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+```
+
+15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup. 
+```{r}
+#boxplot
+ggplot(Litter) +
+  geom_boxplot(aes(x = functionalGroup, y = dryMass), color = "chocolate4")
+#violin plot
+ggplot(Litter) +
+  geom_violin(aes(x = functionalGroup, y = dryMass),
+              draw_quantiles = c(0.25, 0.5, 0.75))
+```
+
+Why is the boxplot a more effective visualization option than the violin plot in this case?
+
+> Answer: As seen in the graphs above, the boxplot is a more effective visualization in comparison to the violin plot for the Litter dataset. The boxplot is more effective because the plot displays summary statistics such as the mean, median, and interquartile ranges. Meanwhile, violin plots show the probability density of the data at different values along the vertical axis. Furthermore, the probability of the data is so dense or scarce along the vertical axis at specific dry mass values that the visulaization is lacking.
+
+What type(s) of litter tend to have the highest biomass at these sites? 
+
+> Answer: Needles have the highest biomass at these sites according to the plots displayed above!

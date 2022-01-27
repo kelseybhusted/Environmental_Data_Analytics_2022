@@ -29,6 +29,8 @@ In this course, we will always open the R project file for the course, and addit
 #i.e., the folder that houses the R Project file.
 
 getwd()
+
+
 ```
 
 If your working directory is not set to the folder you want, you have several options. The first is to directly code your working directory. You may do this by defining an absolute file path (below). What are the pitfalls of using an absolute file path?
