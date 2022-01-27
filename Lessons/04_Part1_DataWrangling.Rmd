@@ -121,12 +121,17 @@ NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))
 
 # Exercise: 
 # filter NTL.phys.data for the year 1999
+NTL.phys.data.1999_data <- filter(NTL.phys.data, year4 > 1998, year4 <2000)
 # what code do you need to use, based on the class of the variable?
 class(NTL.phys.data$year4)
+#code says that year4 is classified as an integer
 
 # Exercise: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
 
+NTL.phys.data.TuesdayLake <- filter(NTL.phys.data, lakename %in% c("Tuesday Lake"))
+
+NTL.phys.data.TuesdayLake_1990_to_1999 <- filter(NTL.phys.data.TuesdayLake, year4 > 1989, year4 < 2000)
 
 ```
 Question: Why don't we filter using row numbers?
