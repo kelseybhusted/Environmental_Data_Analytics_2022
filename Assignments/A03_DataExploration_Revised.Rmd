@@ -93,6 +93,7 @@ class(Neonics$Conc.1..Author.) # The Con.1..Author is classified as factors in t
 ## Explore your data graphically (Neonics)
 
 9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
+<<<<<<< HEAD:A03_DataExploration_Revised.Rmd
 ```{r}
 ggplot(Neonics) +
   geom_freqpoly(aes(x = Publication.Year), bins = 50, color = "darkgreen")
@@ -159,8 +160,10 @@ ggplot(Litter) +
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer: As seen in the graphs above, the boxplot is a more effective visualization in comparison to the violin plot for the Litter dataset. The boxplot is more effective because the plot displays summary statistics such as the mean, median, and interquartile ranges. Meanwhile, violin plots show the probability density of the data at different values along the vertical axis. Furthermore, the probability of the data is so dense or scarce along the vertical axis at specific dry mass values that the visulaization of the data is lacking.
+> Answer: As seen in the graphs above, the boxplot is a more effective visualization in comparison to the violin plot for the Litter dataset. The boxplot is more effective because the plot displays summary statistics such as the mean, median, and interquartile ranges. Meanwhile, violin plots show the probability density of the data at different values along the vertical axis. Furthermore, the probability of the data is so dense or scarce along the vertical axis at specific dry mass values that the visulaization is lacking.
 
 What type(s) of litter tend to have the highest biomass at these sites? 
 
 > Answer: Needles have the highest biomass at these sites according to the plots displayed above!
+=======
+>>>>>>> 909b1bf8e150590481dcb3ff3f09703ad1d1a4a8:Assignments/A03_DataExploration_Revised.Rmd
