@@ -52,9 +52,9 @@ class(NTL.nutrient.data.PeterPaul$sampledate)
 NTL.nutrient.data.PeterPaul$sampledate <- as.Date(NTL.nutrient.data.PeterPaul$sampledate, format = "%m/%d/%y")
 
 NTL.nutrient.data.PeterPaul <- 
-  NTL.nutrient.data.PeterPaul %>% #
-  mutate(month = month(sampledate)) %>% #
-  select(lakeid:daynum, month, sampledate:comments) %>% # 
+  NTL.nutrient.data.PeterPaul %>% #The dataset needs to be stated first
+  mutate(month = month(sampledate)) %>% #adding a month column 
+  select(lakeid:daynum, month, sampledate:comments) %>% # rearranging the column order
   drop_na(depth)
 
 # Save processed nutrient file
@@ -69,7 +69,8 @@ NTL.nutrient.data.PeterPaul.subset <- select(NTL.nutrient.data.PeterPaul,
                                              lakename, year4, daynum, month, sampledate, depth:po4)
 
 # write a more succinct line of code to subset the nutrient dataset. 
-
+NTL.nutrient.data.PeterPaul.subset <- select(NTL.nutrient.data.PeterPaul, 
+                                             lakename:sampledate, depth:po4)
 ```
 
 
@@ -91,8 +92,9 @@ We will work with the new functions from `tidyr`. For gather we will use `pivot_
 # Gather nutrient data into one column using pivot_longer
 NTL.nutrient.data.PeterPaul.gathered <- pivot_longer(NTL.nutrient.data.PeterPaul.subset,tn_ug:po4, names_to = "nutrient", values_to = "concentration")
 
+#subset does something similar to filtering; !is.na removes rows with NA in the concentration column
 NTL.nutrient.data.PeterPaul.gathered <- subset(NTL.nutrient.data.PeterPaul.gathered, !is.na(concentration))
-count(NTL.nutrient.data.PeterPaul.gathered, nutrient)
+count(NTL.nutrient.data.PeterPaul.gathered, "nutrient")
 
 write.csv(NTL.nutrient.data.PeterPaul.gathered, row.names = FALSE, 
           file = "./Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaulGathered_Processed.csv")
@@ -136,7 +138,7 @@ write.csv(NTL.phys.nutrient.data.PeterPaul, row.names = FALSE,
 ```
 
 ### rbind
-
+#binding rows together
 The Niwot Ridge litter dataset, when downloaded from NEON, comes packaged with each month as a different .csv file. If we want to analyze the dataset as a single data frame, we need to combine each of these files. 
 
 ```{r}
@@ -153,6 +155,7 @@ However, there are 20 months in this dataset, so importing all these files indiv
 LitterFiles = list.files(path = "./Data/Raw/NIWO_Litter/", pattern="*.csv", full.names=TRUE)
 LitterFiles
 
+#reading each element in the file
 Litter <- LitterFiles %>%
   ldply(read.csv)
 ```
@@ -165,6 +168,8 @@ LitterTrap <- left_join(Litter, Trap, by = c("siteID", "plotID", "trapID"))
 dim(Litter)
 dim(Trap)
 dim(LitterTrap)
+view(LitterTrap)
+
 
 LitterTrap <- LitterTrap %>%
   select(plotID:trapID, collectDate, functionalGroup:qaDryMass, subplotID:geodeticDatum)
