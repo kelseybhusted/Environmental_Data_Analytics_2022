@@ -86,7 +86,7 @@ summary(Neonics$Species.Common.Name, decreasing = TRUE)
 class(Neonics$Conc.1..Author.) # The Con.1..Author is classified as factors in the dataset.
 
 ```
-> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variable. Therefore, Conc.1..Author cannot be classified as numerical or categorical.
+> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variables. Therefore, Conc.1..Author cannot be classified as solely numerical or categorical.
 
 
 
@@ -107,7 +107,7 @@ ggplot(Neonics) +
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer: According to the graph displayed above, the most common test locations include the lab and natural field. While tests conducted within the natural field seem to initially increase and then noticeably decrease with time, tests performed in the lab display more of a general increase over time. 
+> Answer: According to the graph displayed above, the most common test locations include the lab and natural field. While tests conducted within the natural field seem to initially increase and then noticeably decrease with time, tests performed in the lab display more of a generally increasing trend over time. 
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 ```{r}
@@ -137,7 +137,7 @@ unique(Litter$collectDate)
 unique(Litter$plotID)
 ```
 
-> Answer: 
+> Answer: 12 plots were sampled at Niwot Ridge.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 ```{r}
