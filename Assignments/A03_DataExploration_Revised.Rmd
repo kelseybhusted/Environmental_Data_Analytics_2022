@@ -86,14 +86,13 @@ summary(Neonics$Species.Common.Name, decreasing = TRUE)
 class(Neonics$Conc.1..Author.) # The Con.1..Author is classified as factors in the dataset.
 
 ```
-> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variable. Therefore, Conc.1..Author cannot be classified as numerical or categorical.
+> Answer:Factors are generally used to represent categorical data. Although factors look like character vectors, they are actually integers that are represented by characters. Looking at the Conc.1..Author column, the columnn contains charcters in addition to numeric variables. Therefore, Conc.1..Author cannot be classified as solely numerical or categorical.
 
 
 
 ## Explore your data graphically (Neonics)
 
 9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
-<<<<<<< HEAD:A03_DataExploration_Revised.Rmd
 ```{r}
 ggplot(Neonics) +
   geom_freqpoly(aes(x = Publication.Year), bins = 50, color = "darkgreen")
@@ -108,7 +107,7 @@ ggplot(Neonics) +
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer: According to the graph displayed above, the most common test locations include the lab and natural field. While tests conducted within the natural field seem to initially increase and then noticeably decrease with time, tests performed in the lab display more of a general increase over time. 
+> Answer: According to the graph displayed above, the most common test locations include the lab and natural field. While tests conducted within the natural field seem to initially increase and then noticeably decrease with time, tests performed in the lab display more of a generally increasing trend over time. 
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 ```{r}
@@ -138,7 +137,7 @@ unique(Litter$collectDate)
 unique(Litter$plotID)
 ```
 
-> Answer: 
+> Answer: 12 plots were sampled at Niwot Ridge.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 ```{r}
@@ -160,10 +159,8 @@ ggplot(Litter) +
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer: As seen in the graphs above, the boxplot is a more effective visualization in comparison to the violin plot for the Litter dataset. The boxplot is more effective because the plot displays summary statistics such as the mean, median, and interquartile ranges. Meanwhile, violin plots show the probability density of the data at different values along the vertical axis. Furthermore, the probability of the data is so dense or scarce along the vertical axis at specific dry mass values that the visulaization is lacking.
+> Answer: As seen in the graphs above, the boxplot is a more effective visualization in comparison to the violin plot for the Litter dataset. The boxplot is more effective because the plot displays summary statistics such as the mean, median, and interquartile ranges. Meanwhile, violin plots show the probability density of the data at different values along the vertical axis. Furthermore, the probability of the data is so dense or scarce along the vertical axis at specific dry mass values that the visulaization of the data is lacking.
 
 What type(s) of litter tend to have the highest biomass at these sites? 
 
 > Answer: Needles have the highest biomass at these sites according to the plots displayed above!
-=======
->>>>>>> 909b1bf8e150590481dcb3ff3f09703ad1d1a4a8:Assignments/A03_DataExploration_Revised.Rmd
