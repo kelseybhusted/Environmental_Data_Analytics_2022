@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Kelsey Husted"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -24,9 +24,49 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 #1
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022/")
+getwd()
+
+library(tidyverse)
+library(lubridate)
+vignette("dplyr")
+
+Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", stringsAsFactors = TRUE)
+
+
+EPAair_O3_2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
+
+EPAair_O3_2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+
+EPAair_PM25_2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+
+EPAair_PM25_2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
+#Explore the dimensions, column names, and structure of the datasets.
+
+#EPAair_O3_2018
+dim(EPAair_O3_2018)
+colnames(EPAair_O3_2018)
+str(EPAair_O3_2018)
+
+#EPAair_03_2019
+dim(EPAair_O3_2019)
+colnames(EPAair_O3_2019)
+str(EPAair_O3_2019)
+
+#EPAair_PM25_2018
+dim(EPAair_PM25_2018)
+colnames(EPAair_PM25_2018)
+str(EPAair_PM25_2018)
+
+#EPAair_PM25_2019
+dim(EPAair_PM25_2019)
+colnames(EPAair_PM25_2019)
+str(EPAair_PM25_2019)
+
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -36,13 +76,60 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3 Convert to Date
+EPAair_O3_2018$Date <- as.Date(EPAair_O3_2018$Date, format = "%m/%d/%Y")
+class(EPAair_O3_2018$Date)
 
-#4
+EPAair_O3_2019$Date <- as.Date(EPAair_O3_2019$Date, format = "%m/%d/%Y")  
+class(EPAair_O3_2019$Date)
 
-#5
+EPAair_PM25_2018$Date <- as.Date(EPAair_PM25_2018$Date, format = "%m/%d/%Y")
+class(EPAair_PM25_2018$Date)
 
-#6
+EPAair_PM25_2019$Date <- as.Date(EPAair_PM25_2019$Date, format = "%m/%d/%Y")
+class(EPAair_PM25_2019$Date)
+
+#4 Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
+
+EPAair_O3_2018_selected <- select(EPAair_O3_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
+view(EPAair_O3_2018_selected)
+
+EPAair_O3_2019_selected <- select(EPAair_O3_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
+view(EPAair_O3_2019_selected)
+
+EPAair_PM25_2018_selected <- select(EPAair_PM25_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
+view(EPAair_PM25_2018_selected)
+
+EPAair_PM25_2019_selected <- select(EPAair_PM25_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
+view(EPAair_PM25_2019_selected)
+
+#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical).
+
+#
+EPAair_PM25_2018_selected$AQS_PARAMETER_DESC<-'PM2.5'
+
+EPAair_PM25_2018_selected.mutated <- 
+  EPAair_PM25_2018_selected %>%
+  mutate(AQS_PARAMETER_DESC = as.character(AQS_PARAMETER_DESC)) %>%
+  mutate(AQS_PARAMETER_DESC = replace(AQS_PARAMETER_DESC, which(AQS_PARAMETER_DESC == 'PM2.5 - Local Conditions' | AQS_PARAMETER_DESC == 'Acceptable PM2.5 AQI & Speciation Mass'), 'PM2.5'))
+view(EPAair_PM25_2018_selected.mutated)
+
+
+EPAair_PM25_2019_selected.mutated <-
+  EPAair_PM25_2019_selected %>%
+  mutate(AQS_PARAMETER_DESC = as.character(AQS_PARAMETER_DESC)) %>%
+  mutate(AQS_PARAMETER_DESC = replace(AQS_PARAMETER_DESC, which(AQS_PARAMETER_DESC == 'PM2.5 - Local Conditions' | AQS_PARAMETER_DESC == 'Acceptable PM2.5 AQI & Speciation Mass'), 'PM2.5'))
+view(EPAair_PM25_2019_selected.mutated)
+
+#6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
+
+write.csv(EPAair_O3_2018_selected, file = "./Data/Processed/EPAair_O3_2018_Processed.csv", row.names=FALSE)
+
+write.csv(EPAair_O3_2019_selected, file = "./Data/Processed/EPAair_O3_2019_Processed.csv", row.names=FALSE)
+
+write.csv(EPAair_PM25_2018_selected.mutated, file = "./Data/Processed/EPAair_PM25_2018_Processed.csv", row.names=FALSE)
+
+write.csv(EPAair_PM25_2019_selected.mutated, file = "./Data/Processed/EPAair_PM25_2019_Processed.csv", row.names=FALSE)
 
 ```
 
@@ -61,13 +148,33 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC2122_Processed.csv"
 
 ```{r}
-#7
+#7 Combine the four datasets with `rbind`. Make sure your column names are identical prior to running this code. 
 
-#8
+EPAair_Combined <- rbind(EPAair_O3_2018_selected, EPAair_O3_2019_selected, EPAair_PM25_2018_selected.mutated, EPAair_PM25_2019_selected.mutated)
+view(EPAair_Combined)
+
+#8 Wrangle your new dataset with a pipe function (%>%) so that it fills the following conditions: 
+#levels(EPAair_Combined$Site.Name)
+
+
+EPAair_Wrangled <-
+  EPAair_Combined %>%
+  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name ==  "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School") %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarise(meanAQIValue = mean(DAILY_AQI_VALUE),
+            meanLatitude = mean(SITE_LATITUDE),
+            meanLongitude = mean(SITE_LONGITUDE)) %>%
+  mutate(month = month(Date), year = year(Date))
+dim(EPAair_Wrangled)
+view(EPAair_Wrangled)
 
 #9
+EPAair_Spread <- pivot_wider(EPAair_Wrangled, names_from = AQS_PARAMETER_DESC, values_from = meanAQIValue)
+view(EPAair_Spread)
+
 
 #10
+dim(EPAair_Spread)
 
 #11
 
@@ -84,7 +191,22 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #12(a,b)
-
+#a
+EPAair_Spread.wrangle <- 
+  EPAair_Spread %>%
+  group_by(Site.Name, month, year) %>%
+  summarise(meanOzone = mean(Ozone),
+            meanPM2.5 = mean(PM2.5))
+view(EPAair_Spread.wrangle)
+dim(EPAair_Spread.wrangle)
+#b
+#df[!with(df,is.na(x)& is.na(y)),]
+EPAair_Spread.wrangle <- 
+  EPAair_Spread %>%
+  group_by(Site.Name, month, year) %>%
+  summarise(meanOzone = mean(Ozone),
+            meanPM2.5 = mean(PM2.5)) %>%
+  drop_na(!with(EPAair_Spread, is.na(Ozone) & is.na(PM2.5)))
 
 #13
 
