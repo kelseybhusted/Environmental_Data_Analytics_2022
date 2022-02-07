@@ -166,6 +166,7 @@ display.brewer.all(n = 9)
 
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth, shape = lakename)) +
+  xlab("TP ug/L") + ylab("TN ug/L") +
   geom_point() 
 print(NvsP)
 
@@ -177,12 +178,14 @@ NvsP2 <-
   geom_point(alpha = 0.7, size = 2.5) +
   labs(color = "Depth", shape = "Lake Name") + # change your legend labels here
   #changing shape of points;since you have two variables need to pick two shapes (i.e., 15 and 17)
+  xlab("TP ug/L") + ylab("TN ug/L") +
   scale_shape_manual(values = c(15, 17)) +
   #scale_color_distiller(palette = "Blues", direction = 1) + # use scale_color_brewer for discrete variables
   scale_color_viridis(option = "magma", direction = -1) +
   theme(legend.position = "right", 
         legend.text = element_text(size = 12), legend.title = element_text(size = 12))
 print(NvsP2)
+
 
 # change your y axis label to list concentration in micrograms per liter
 # remove your x axis label
@@ -191,13 +194,25 @@ print(NvsP2)
 Nutrientplot <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration, color = nutrient)) +
   geom_boxplot() +
+  scale_fill_discrete(breaks = c("NH34", "NO23", "PO4", "TN (ug)", "TP (ug)"))+
+  ylab("Concentration (ug/L)") +
 # place your additional edits here
   scale_y_continuous(expand = c(0, 0)) +
   #scale_color_brewer(palette = "YlGnBu") +
   #scale_color_manual(values = c("#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84")) +
   #scale_color_viridis(discrete = TRUE, end = 0.8) +
-  theme(legend.position = "right")
+  theme(legend.position = "right") 
+  
 print(Nutrientplot)
+
+Nutrientplot2 <-
+  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration, color = nutrient)) +
+  geom_boxplot() +
+  ylab("Concentration (ug/L)") +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_color_brewer(palette = "YlGnBu", labels = c("NH34", "NO23", "PO4", "TN (ug)", "TP (ug)")) +
+  theme(legend.position = "right", axis.title.x = element_blank())
+print(Nutrientplot2)
 ```
 
 

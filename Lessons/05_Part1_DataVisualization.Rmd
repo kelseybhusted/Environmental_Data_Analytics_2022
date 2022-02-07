@@ -86,7 +86,7 @@ ggplot(EPAair, aes(x = Date, y = Ozone)) +
   geom_point()
 
 #same plot as above but in a different way
-#useful when wanting to add two plots in the same window or page; you should get used to practiving storing plots into a name
+#useful when wanting to add two plots in the same window or page; you should get used to practicing storing plots into a name
 O3plot <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone))
 print(O3plot)
