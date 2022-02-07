@@ -23,8 +23,14 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 2. Explore the dimensions, column names, and structure of the datasets. 
 
+
 ```{r, message = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(formatR)
+knitr::opts_chunk$set(message=FALSE, tidy.opts=list(width.cutoff=150), tidy=TRUE)
+#knitr::opts_chunk$set(echo = TRUE)
+# Set so that long lines in R will be wrapped:
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
 #1
 setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022/")
 getwd()
