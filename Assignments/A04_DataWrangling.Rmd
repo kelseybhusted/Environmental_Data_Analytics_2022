@@ -176,7 +176,8 @@ dim(EPAair_Wrangled)
 view(EPAair_Wrangled)
 
 #9 Spread your data such that AQI values for ozone and PM2.5 are in separate columns. Each location on a specific date should now occupy only one row.
-EPAair_Spread <- pivot_wider(EPAair_Wrangled, names_from = AQS_PARAMETER_DESC, values_from = meanAQIValue)
+EPAair_Spread <- pivot_wider(EPAair_Wrangled, names_from = AQS_PARAMETER_DESC, 
+                             values_from = meanAQIValue)
 
 #10 Call up the dimensions of your new tidy dataset.
 dim(EPAair_Spread)
