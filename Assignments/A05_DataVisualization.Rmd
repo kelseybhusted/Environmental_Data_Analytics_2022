@@ -1,9 +1,11 @@
 ---
-title: "Assignment 5: Data Visualization"
+title: 'Assignment 5: Data Visualization'
 author: "Kelsey Husted"
-output: pdf_document
+output:
+  pdf_document: default
+  word_document: default
 geometry: margin=2.54cm
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -30,6 +32,10 @@ and chemistry/physics for Peter and Paul Lakes (use the tidy
 the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_Litter_mass_trap_Processed.csv`] version). 
 
 2. Make sure R is reading dates as date format; if not change the format to date.
+```{r, echo = FALSE}
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE, echo=TRUE)
+```
+
 
 ```{r}
 #1 
@@ -74,22 +80,23 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 #4
 TP_PO4_Plot <- ggplot(PeterPaul.chem.nutrients, aes(x = po4, y = tp_ug, color = lakename)) +
   geom_point(alpha = 0.5, size = 1.5) +
-  scale_x_continuous(expand = c(0, 0), limits = c(0, 35)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 150)) +
-  #used scale_x/y_continuous to start zero at origin instead of xlim/ylim shown below
-  #xlim(0, 35) +
-  #ylim(0, 150) +
+  xlim(0, 35) +
+  ylim(0, 150) +
   geom_smooth(method = lm, color = "black") +
   xlab(expression("PO"[4])) + ylab("TP ug/L") +
   scale_color_brewer(palette = "Set2") +
   my_theme
 print(TP_PO4_Plot)
+
+#A way to set the origin of plot to zero
+  #scale_x_continuous(expand = c(0, 0), limits = c(0, 35)) +
+  #scale_y_continuous(expand = c(0, 0), limits = c(0, 150)) +
 ```
 
 
 5. [NTL-LTER] Make three separate boxplots of (a) temperature, (b) TP, and (c) TN, with month as the x axis and lake as a color aesthetic. Then, create a cowplot that combines the three graphs. Make sure that only one legend is present and that graph axes are aligned.
 
-```{r, fig.height = 3, fig.width = 4}
+```{r, fig.height = 3, fig.width = 6}
 #5
 #transform month into categories
 PeterPaul.chem.nutrients$month <- as.factor(PeterPaul.chem.nutrients$month)
