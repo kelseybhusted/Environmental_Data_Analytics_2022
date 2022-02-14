@@ -15,8 +15,10 @@ editor_options:
 ## Set up
 ```{r, message = FALSE}
 getwd()
+update.packages()
 library(tidyverse)
-#install.packages("agricolae")
+library(htmltools)
+install.packages("agricolae")
 library(agricolae)   #you may need to install/update package "htmltools" before installing and loading agricolae
 
 Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
@@ -50,11 +52,14 @@ summary(Litter.Totals$plotID)
 # not necessarily normality of raw data. See below when we plot the model.
 # shapiro.test() performs the Shapiro-Wilk test of the null that data follows a normal distribution
 
+#if p-value is less than 0.05, we reject the null hypothesis meaning that the data for this site does NOT follow normal distribution
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_041"])
+#we do not reject null hypothesis for site 046; they have a normal distribution
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_046"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_047"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_051"])
+#we do not reject null hypothesis for site 057; they have a normal distribution
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_057"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_058"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_061"])
@@ -70,7 +75,6 @@ qqnorm(Litter.Totals$dryMass); qqline(Litter.Totals$dryMass)
 # ANOVA is robust against departures from equal variance.
 # bartlett.test() performs Bartlett's test of the null that the variances in each of the groups (samples) are the same.
 bartlett.test(Litter.Totals$dryMass ~ Litter.Totals$plotID)
-
 #results: reject null i.e. variances are not equal
 
 # Format ANOVA as aov
@@ -88,10 +92,13 @@ summary(Litter.Totals.anova2)
 plot(Litter.Totals.anova2)
 
 # Post-hoc test
+#The Anova test tells you that the means are not the same but the Post-hoc test goes a step further and tells you which means are different specifically
 # TukeyHSD() computes Tukey Honest Significant Differences
+#the null hypothesis is that the two means are equal
 TukeyHSD(Litter.Totals.anova)
 
 # Extract groupings for pairwise relationships
+#group = TRUE means that you want them to actually group levels that have the same mean
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups
 
@@ -117,6 +124,7 @@ A two-way ANOVA allows us to examine the effects of two categorical explanatory 
 
 ```{r}
 # Format as aov
+#we reject our null hypothesis which means that the mean across our groups are different
 Litter.anova.2way <- aov(data = Litter, dryMass ~ functionalGroup + nlcdClass)
 summary(Litter.anova.2way)
 
@@ -152,10 +160,11 @@ TukeyHSD(Litter.anova.2way3)
 
 Litter.interaction <- with(Litter, interaction(functionalGroup, nlcdClass))
 
+
 #Litter.test <- cbind(Litter,Litter.interaction)
 
 Litter.anova.2way5 <- aov(data = Litter, dryMass ~ Litter.interaction)
-
+#group = TRUE means that you want them to actually group levels that have the same mean
 Litter.groups <- HSD.test(Litter.anova.2way5, "Litter.interaction", group = TRUE)
 Litter.groups
 
@@ -163,8 +172,17 @@ Litter.groups
 # Edit this graph to make it more visually appealing.
 # Add letters to represent statistical groupings.
 Litter.anova.plot <- ggplot(Litter, aes(y = dryMass, x = nlcdClass, color = functionalGroup)) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = c("a", "b", "bc", "cd", "d", "d", 
+                         "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d", "d")) +
   geom_boxplot()
 print(Litter.anova.plot)
 
+
+
+PeterPaul.chem.nutrients <- filter(PeterPaul.chem.nutrients, 
+                                   irradianceWater != 0 & irradianceWater < 5000)
+irradiance.regression2 <- lm(data = PeterPaul.chem.nutrients, log(irradianceWater) ~ depth)
+summary(irradiance.regression2)
 ```
 

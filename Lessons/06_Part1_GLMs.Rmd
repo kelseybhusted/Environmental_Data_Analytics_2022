@@ -62,7 +62,7 @@ The linear regression will test the null hypotheses that
 
 1. The intercept (alpha) is equal to zero.
 2. The slope (beta) is equal to zero
-
+A
 Whether or not we care about the result of each of these tested hypotheses will depend on our research question. Sometimes, the test for the intercept will be of interest, and sometimes it will not.
 
 Important components of the linear regression are the correlation and the R-squared value. The **correlation** is a number between -1 and 1, describing the relationship between the variables. Correlations close to -1 represent strong negative correlations, correlations close to zero represent weak correlations, and correlations close to 1 represent strong positive correlations. The **R-squared value** is the correlation squared, becoming a number between 0 and 1. The R-squared value describes the percent of variance accounted for by the explanatory variables. 
@@ -72,6 +72,7 @@ Important components of the linear regression are the correlation and the R-squa
 For the NTL-LTER dataset, can we predict irradiance (light level) from depth?
 
 ```{r}
+#y is irradiance (i.e., dependent variable) and x is dept (i.e., independent variable)
 irradiance.regression <- lm(PeterPaul.chem.nutrients$irradianceWater ~ PeterPaul.chem.nutrients$depth)
 
 # another way to format the lm() function
@@ -117,6 +118,7 @@ print(irradiancebydepth)
 Given the distribution of irradiance values, we don't have a linear relationship between x and y in this case. Let's try log-transforming the irradiance values. Note we also removing the observations that seems to ba an outlier.
 
 ```{r, fig.height = 3, fig.width = 4}
+#filtering data to remove zeros and only include < 5000 
 PeterPaul.chem.nutrients <- filter(PeterPaul.chem.nutrients, 
                                    irradianceWater != 0 & irradianceWater < 5000)
 irradiance.regression2 <- lm(data = PeterPaul.chem.nutrients, log(irradianceWater) ~ depth)
@@ -130,7 +132,7 @@ par(mfrow = c(1,1))
 irradiancebydepth2 <- 
   ggplot(PeterPaul.chem.nutrients, aes(x = depth, y = irradianceWater)) +
   geom_smooth(method = "lm") +
-  scale_y_log10() +
+  scale_y_log10() + #taking log of irradiance
   geom_point() 
 print(irradiancebydepth2) 
 
@@ -150,6 +152,7 @@ print(irradiancebydepth2)
 It is possible, and often useful, to consider multiple continuous explanatory variables at a time in a linear regression. For example, total phosphorus concentration in Paul Lake (the unfertilized lake) could be dependent on depth and dissolved oxygen concentration: 
 
 ``` {r, fig.height = 3, fig.width = 4}
+#we'll multiple explanatory variables (i.e., x) explaining y
 TPregression <- lm(data = subset(PeterPaul.chem.nutrients, lakename == "Paul Lake"), 
                    tp_ug ~ depth + dissolvedOxygen)
 summary(TPregression)
