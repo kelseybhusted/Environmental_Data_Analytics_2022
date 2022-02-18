@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Student Name"
+author: "Kelsey Husted"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -27,11 +27,25 @@ The completed exercise is due on Monday, February 28 at 7:00 pm.
 
 ```{r setup}
 #1
-
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+#set working directory
+getwd()
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
+#load packages
+library(tidyverse)
+library(agricolae)
+#Import data
+NTL.LTER.chem.phys <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+#Set date
+NTL.LTER.chem.phys$sampledate <- as.Date(NTL.LTER.chem.phys$sampledate, format = "%Y-%m-%d")
+class(NTL.LTER.chem.phys$sampledate)
 
 #2
-
-
+#Build a ggplot theme
+my_theme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "bottom", legend.text=element_text(size=8))
 ```
 
 ## Simple regression
@@ -39,8 +53,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: Mean lake temperature does not change with depth.
+Ha: Mean lake temperature changes with depth.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -52,7 +66,14 @@ Ha:
 
 ```{r scatterplot}
 #4
+#Wrangle data
+NTL.LTER.chem.phys.wrangled <-
+  NTL.LTER.chem.phys %>%
+  filter(month == 7) %>%
+  select(lakename, year4, daynum, depth, temperature_C) %>%
+  drop_na() 
 
+view(NTL.LTER.chem.phys.wrangled)
 
 #5
 
