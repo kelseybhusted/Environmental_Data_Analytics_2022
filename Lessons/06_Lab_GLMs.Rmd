@@ -196,7 +196,6 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 ```{r}
 
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
-
 PM2.5_Ozone.Regressions <- lm (data = EPAair, PM2.5 ~ Ozone )
 summary(PM2.5_Ozone.Regressions)
 #Reject the null hypothesis 
@@ -221,31 +220,37 @@ What other variables can we add to improve model?
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
 library(corrplot)
 
-PM2.5byOzoneInfor <- 
-  EPair %>%
+PM2.5byOzone.Info <- 
+  EPAair %>%
   select(Ozone, PM2.5) %>%
   na.omit()
+print(PM2.5byOzone.Info)
 
-PM2.5byOzoneCorr <
-
-library(corrplot)
-PeterPaulnutrients <- 
-  PeterPaul.chem.nutrients %>%
-  select(tn_ug:po4) %>%
-  na.omit()
-PeterPaulCorr <- cor(PeterPaulnutrients)
-corrplot(PeterPaulCorr, method = "ellipse")
-corrplot.mixed(PeterPaulCorr, upper = "ellipse")
-
+PM2.5byOzoneCorr <- cor(PM2.5byOzone.Info)
+corrplot(PM2.5byOzoneCorr, method = "ellipse")
+corrplot.mixed(PM2.5byOzoneCorr, upper = "ellipse")
 
 
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
 
+Paul.naomit <- PeterPaul.chem.nutrients %>%
+  filter(lakename == "Paul Lake") %>%
+  na.omit()
+
+TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen + 
+              temperature_C + tn_ug + po4)
+
+#Choose a model by AIC in a Stepwise Algorithm
+step(TPAIC)
+TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
+summary(TPmodel)
+
 
 
 #Exercise 7: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
+
 
 ```
 
