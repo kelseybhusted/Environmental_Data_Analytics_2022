@@ -33,7 +33,9 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 2. Make sure R is reading dates as date format; if not change the format to date.
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE, echo=TRUE)
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+#knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE, echo=TRUE)
 ```
 
 
@@ -137,6 +139,7 @@ Plots_Combined <- plot_grid(Temp_Boxplot + theme(legend.position = "none"), TP_B
 NutrientTemp_3plots <- plot_grid(Plots_Combined, legend_b, ncol = 1, rel_heights = c(1, .2))
 print(NutrientTemp_3plots)
 
+
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
@@ -163,6 +166,7 @@ NEON_NIWO_Litter_Needles_Class <-
   geom_point() +
   xlab("Collection Date") + ylab("Dry Mass of Needles") +
   scale_color_brewer(palette = "Dark2") +
+  #facet_wrap(vars(nlcdClass)) +
   facet_wrap("nlcdClass", nrow = 2) +
   my_theme
   

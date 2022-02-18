@@ -66,7 +66,7 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 
 > Exercise 1: State the hypotheses for testing mean of AQI index.
 
-> Answer: 
+> Answer: The mean is greater than 50 (the null hypothesis)
 
 
 ```{r}
@@ -77,12 +77,14 @@ EPAair.subsample <- sample_n(EPAair, 5000)
 
 # Evaluate assumption of normal distribution
 shapiro.test((EPAair.subsample$Ozone))
+#result: reject the null hypothesis the daya is normally distibuted
 ggplot(EPAair, aes(x = Ozone)) +
   geom_histogram() 
 qqnorm(EPAair$Ozone); qqline(EPAair$Ozone)
 
 O3.onesample <- t.test(EPAair$Ozone, mu = 50, alternative = "less")
 O3.onesample
+#result: reject the null hypothesis (i.e., true mean is greater than 50)
 
 Ozone.plot <- ggplot(EPAair, aes(x = Ozone)) +
   #geom_density(stat = "count", fill = "gray") +
@@ -93,8 +95,9 @@ print(Ozone.plot)
 ```
 
 Write a sentence or two about the results of this test. Include both the results of the test and an interpretation that puts the findings in context of the research question.
+Are Ozone levels below the threshold for "good" AQI index (0-50)?
 
-> 
+> A significant portion of the ozone layer levels are located between the AQI index 0-50 thus the null hypothesis is rejected.
 
 ### Two-sample t-test
 
@@ -103,6 +106,7 @@ The two-sample *t* test is used to test the hypothesis that the mean of two samp
 ```{r}
 shapiro.test(EPAair$Ozone[EPAair$Year == 2018])
 shapiro.test(EPAair$Ozone[EPAair$Year == 2019])
+#result: reject both null hypothesis (i.e., both years are not normally distributed)
 
 #p-value less than 0.05 then reject null for 2018 and 2019 i.e. data do not follow normal distribution
 
@@ -117,6 +121,7 @@ ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
 # Format as a t-test
 O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
 O3.twosample
+#result: the means are not the same (we reject the null hypothesis)
 O3.twosample$p.value
 
 # Format as a GLM
@@ -151,7 +156,34 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 
 ```{r}
 #Exercise 2:
+EPAair$Year <- as.factor(EPAair$Year)
+#1
+Plot1 <-
+  ggplot(EPAair, aes(x= Ozone, fill = as.factor(Year))) +
+  scale_fill_manual(values = c("green", "cyan")) +
+  labs( x = "Ozone AQI Value", y = "Density", fill = "") +
+  geom_density(alpha = 0.5)
+print(Plot1)
 
+#2
+Plot2 <- 
+  ggplot(EPAair, aes(x = Year, y = Ozone, fill = as.factor(Year))) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = c("2018", "2019")) +
+  scale_fill_manual(values = c("yellow", "orange")) +
+  labs(x = "Year", y = "Ozone AQI Value", fill = "") +
+  geom_boxplot()
+print(Plot2)
+
+#3
+#geom_violin of ozone divided by year, with the 0.5 quantile marked as a horizontal line. Add letters representing a significant difference between 2018 and 2019. 
+Plot3 <- 
+  ggplot(EPAair, aes(x = as.factor(Year), y = Ozone, fill = as.factor(Year))) +
+  labs(x = "Year", y = "Ozone AQI Value", fill = "") +
+  scale_fill_manual(values = c("lightcyan", "chocolate")) +
+  geom_violin(draw_quantiles = 0.5)
+print(Plot3)
+  
 
 ```
 
@@ -165,11 +197,17 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
+PM2.5_Ozone.Regressions <- lm (data = EPAair, PM2.5 ~ Ozone )
+summary(PM2.5_Ozone.Regressions)
+#Reject the null hypothesis 
 
 
 #Exercise 4: Build a scatterplot. Add a line and standard error for the linear regression. 
-
-
+PM2.5byOzone <- 
+  ggplot(EPAair, aes(x = Ozone, y= PM2.5)) +
+  geom_smooth(method = "lm") +
+  geom_point()
+print(PM2.5byOzone)
 
 ```
 
@@ -181,6 +219,23 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
+library(corrplot)
+
+PM2.5byOzoneInfor <- 
+  EPair %>%
+  select(Ozone, PM2.5) %>%
+  na.omit()
+
+PM2.5byOzoneCorr <
+
+library(corrplot)
+PeterPaulnutrients <- 
+  PeterPaul.chem.nutrients %>%
+  select(tn_ug:po4) %>%
+  na.omit()
+PeterPaulCorr <- cor(PeterPaulnutrients)
+corrplot(PeterPaulCorr, method = "ellipse")
+corrplot.mixed(PeterPaulCorr, upper = "ellipse")
 
 
 
