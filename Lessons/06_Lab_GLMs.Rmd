@@ -222,9 +222,11 @@ library(corrplot)
 
 PM2.5byOzone.Info <- 
   EPAair %>%
-  select(Ozone, PM2.5) %>%
+  select(Ozone, PM2.5, Month, Year, meanLat, meanLng) %>%
   na.omit()
 print(PM2.5byOzone.Info)
+
+view(EPAair)
 
 PM2.5byOzoneCorr <- cor(PM2.5byOzone.Info)
 corrplot(PM2.5byOzoneCorr, method = "ellipse")
@@ -234,24 +236,15 @@ corrplot.mixed(PM2.5byOzoneCorr, upper = "ellipse")
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
-
-Paul.naomit <- PeterPaul.chem.nutrients %>%
-  filter(lakename == "Paul Lake") %>%
-  na.omit()
-
-TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen + 
-              temperature_C + tn_ug + po4)
-
-#Choose a model by AIC in a Stepwise Algorithm
-step(TPAIC)
-TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
-summary(TPmodel)
+PM2.5byOzone.AIC <- lm(data = PM2.5byOzone.Info, Ozone ~ PM2.5 + Month + Year + meanLat + meanLng)
+summary(PM2.5byOzone.AIC)
+step(PM2.5byOzone.AIC)
 
 
 
 #Exercise 7: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
-
-
+PM2.5byOzone.AIC.filtered <- lm(data = PM2.5byOzone.Info, Ozone ~ PM2.5 + Month + Year + meanLng)
+summary(PM2.5byOzone.AIC.filtered)
 ```
 
 

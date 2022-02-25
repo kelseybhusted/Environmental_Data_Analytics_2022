@@ -42,6 +42,9 @@ Does total litter biomass differ among sites at the Niwot Ridge LTER?
 Litter.Totals <- Litter %>%
   group_by(plotID, collectDate, nlcdClass) %>%
   summarise(dryMass = sum(dryMass))
+view(Litter.Totals)
+view(Litter)
+summar
 
 summary(Litter.Totals)
 #check all value of plotID
