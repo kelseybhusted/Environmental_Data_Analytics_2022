@@ -105,6 +105,7 @@ A given time series can be made up of several component series:
 2. A **trend** component, which quantifies the upward or downward progression over time. The trend component of a time series does not have to be monotonic.
 3. An **error** or **random** component, which makes up the remainder of the time series after other components have been accounted for. This component reflects the noise in the dataset. 
 4. (optional) A **cyclical** component, which repeats over periods greater than the seasonal component. A good example of this is El Niño Southern Oscillation (ENSO) cycles, which occur over a period of 2-8 years.
+#cycle is like a seasonal component but will repeat over longer time-periods like climate change trends
 
 ### Example: Eno discharge
 
@@ -115,7 +116,12 @@ We first need to turn the discharge data into a time series object in R. This is
 Note: time series objects must be equispaced. In our case, we have daily data with no NAs in the data frame, so we don't need to worry about this. We will cover how to address data that are not equispaced later in the lesson.
 
 ```{r}
+#in a rime series, it's important to define a starting point; in this particular case, first observation point is in January 1985
+#fresquency of observation is 365
+view(EnoDischarge.late)
 EnoDischarge.late_ts <- ts(EnoDischarge.late$discharge.mean, start = c(1985,1), frequency = 365)
+#in code below, looking at the first 10 elements of the discharge mean
+head(EnoDischarge.late_ts, 10)
 ```
 
 The `stl` function decomposes the time series object into its component parts. We must specify that the window for seasonal extraction is either "periodic" or a specific number of at least 7. The decomposition proceeds through a loess (locally estimated scatterplot smoothing) function.
@@ -129,8 +135,10 @@ EnoDischarge.late_Decomposed <- stl(EnoDischarge.late_ts, s.window = "periodic")
 plot(EnoDischarge.late_Decomposed)
 
 # We can extract the components and turn them into data frames
+#we're creating a new data frame
 EnoDischarge.late_Components <- as.data.frame(EnoDischarge.late_Decomposed$time.series[,1:3])
 
+#adding two more columns to my components (i.e, Date and Observed columns)
 EnoDischarge.late_Components <- mutate(EnoDischarge.late_Components,
         Observed = EnoDischarge.late$discharge.mean,     
         Date = EnoDischarge.late$datetime)
@@ -184,10 +192,12 @@ summary(wind_data$AWND)
 # In real applications you will simply replace NAs
 wind_data_clean <- 
   wind_data %>% 
+  #adding a new column called 'AWND.clean' with the zoo package
+  #na.approx interpolates missing data using either the linear interpolation or the sp line interpolation and applying it to column 'AWND'
   mutate( AWND.clean = zoo::na.approx(AWND) )
 
 summary(wind_data_clean$AWND.clean)
-#Note the NA is gone
+#Note the NA is gone but the the mean, meadian, ect. remians the same
 
 ggplot(wind_data_clean ) +
   geom_line(aes(x = DATE, y = AWND.clean), color = "red") +
@@ -221,6 +231,7 @@ Note that wind speed has a seasonal cycle. We might be interested in knowing how
 # Generate time series (trend test needs ts, not data.frame)
 f_month <- month(first(wind_data_clean$DATE))
 f_year <- year(first(wind_data_clean$DATE))
+
 wind_data_ts <- ts(wind_data_clean$AWND.clean,
                    start=c(f_year,f_month),
                    frequency=12) 
@@ -228,6 +239,7 @@ wind_data_ts <- ts(wind_data_clean$AWND.clean,
 #decompose
 wind_data_decomp <- stl(wind_data_ts,s.window = "periodic")
 plot(wind_data_decomp)
+#from the decompose (i.e., stl) test, we know that we're dealing with seasonality so we use the Seasonal Mann Kendall test to look at the monotonic trend
 
 # Run SMK test
 wind_data_trend1 <- Kendall::SeasonalMannKendall(wind_data_ts)
@@ -235,12 +247,17 @@ wind_data_trend1 <- Kendall::SeasonalMannKendall(wind_data_ts)
 # Inspect results
 wind_data_trend1
 summary(wind_data_trend1)
+#p-value is less than 0.05
+#the null hypothesis of the test (i.e., Seasonal Mann Kendall) states that the data is stationary
+#reject null hypothesis and we state that there is a trend
 
-
+#Another way to run the Seasonal Mann Kendall Test
+#shows the results for each individual season of the year
 wind_data_trend2 <- trend::smk.test(wind_data_ts)
 # Inspect results
 wind_data_trend2
 summary(wind_data_trend2)
+
 
 #Visualization
 wind_data_plot <-
