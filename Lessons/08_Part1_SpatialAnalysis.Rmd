@@ -83,6 +83,7 @@ class(GasPlants)
 names(GasPlants)
 str(GasPlants$geometry)
 
+view(GasPlants)
 #View using sf plot
 plot(GasPlants['STATUS'],pch=16)
 
@@ -102,24 +103,26 @@ mapview(GasPlants)
 #Read in our processed EPA Air dataset, setting the Date column to be dates
 EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC2021_Processed.csv", stringsAsFactors = TRUE) %>% 
   mutate(Date = ymd(Date))
-
+view(EPAair)
 #Wrangle so each site has only one record, computing mean ozone and PM2.5 at that site
 EPAair.sites <- EPAair %>% 
   group_by(Site.Name, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
   summarize(
+    #Whenever we have NA in our data,we used na.rm=TRUE to get proper results for mean,mode etc
     mean_Ozone = mean(Ozone, na.rm=T),    #What does "na.rm=T" do? Is it necessary?
     mean_PM25 = mean(PM2.5, na.rm=T),
     count_all = n(),
     count_Ozone = sum(!is.na(Ozone)),
     count_PM25 = sum(!is.na(PM2.5)))
 view(EPAair.sites)
+
 #Convert to a spatial dataframe
 #longitude is x and latitude is y
 #crs = coordinate reference system
 EPAair.sf <- EPAair.sites %>% 
   st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'),
            crs=4326)
-
+view(EPAair.sf)
 #View the data using the methods above...
 
 ```
@@ -159,6 +162,7 @@ Let's explore:
 ```{r buffer Grainger hall}
 #Buffer Grainger Hall 1 unit
 #take something and expand by a number (in this case 1); 1 degree in latitude and longitude
+#looks weird because the geometric units of our featur are measured in angular units, not planar  ones
 the_buffer <- sf_GraingerHall %>% st_buffer(1)
 
 #View the result
@@ -232,6 +236,7 @@ GasPlants.utm <- st_transform(GasPlants,32617)
 
 #Have a look at the coordinate associated with the geometries
 EPAair.sf.utm$geometry[1]
+view(EPAair.sf.utm)
 
 #Plot the data
 ggplot() +
@@ -248,7 +253,6 @@ mean_distances <-  rowMeans(distance_matrix)
 #Add as a column to the epa sites
 EPAair.sf.utm  <-  EPAair.sf.utm %>% 
   bind_cols(mean_distances)
-
 
 
 ```
