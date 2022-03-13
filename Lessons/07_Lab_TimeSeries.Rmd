@@ -55,12 +55,12 @@ Temp_BR <- read.csv("./Data/Raw/tas_1901_2016_BRA.csv", stringsAsFactors = TRUE)
 
 view(Rainfall_BR)
 Rainfall_BR_processed <-
-  Rainfall_BR %>% 
-  rename( Rainfall = Rainfall....MM.) %>% 
-  separate(Statistics,c("Null","Month","Null2")," ") %>% 
-  mutate( Date = my(paste0(Month,"-",Year))) %>% 
-  select(Date,Rainfall)
-
+    Rainfall_BR %>% 
+    rename( Rainfall = Rainfall....MM.) %>% 
+    separate(Statistics,c("Null","Month","Null2")," ") %>% 
+    mutate( Date = my(paste0(Month,"-",Year))) %>% 
+    select(Date,Rainfall)
+view(Rainfall_BR_processed)
 #Exercise 3: Repeat exercise 2 to the temperature dataset.
 Temp_BR_processed <-
   Temp_BR %>% 

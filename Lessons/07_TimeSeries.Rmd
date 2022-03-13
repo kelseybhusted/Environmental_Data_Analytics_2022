@@ -117,7 +117,7 @@ Note: time series objects must be equispaced. In our case, we have daily data wi
 
 ```{r}
 #in a rime series, it's important to define a starting point; in this particular case, first observation point is in January 1985
-#fresquency of observation is 365
+#frequency of observation is 365
 view(EnoDischarge.late)
 EnoDischarge.late_ts <- ts(EnoDischarge.late$discharge.mean, start = c(1985,1), frequency = 365)
 #in code below, looking at the first 10 elements of the discharge mean
@@ -142,7 +142,7 @@ EnoDischarge.late_Components <- as.data.frame(EnoDischarge.late_Decomposed$time.
 EnoDischarge.late_Components <- mutate(EnoDischarge.late_Components,
         Observed = EnoDischarge.late$discharge.mean,     
         Date = EnoDischarge.late$datetime)
-
+view(EnoDischarge.late_Components)
 # Visualize how the trend maps onto the data
 ggplot(EnoDischarge.late_Components) +
   geom_line(aes(y = Observed, x = Date),  size = 0.25) +

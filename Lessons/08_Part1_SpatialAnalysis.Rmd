@@ -32,11 +32,11 @@ The packages we'll need for this lesson are below. Install as necessary and ensu
 library(tidyverse, quietly = TRUE)
 library(lubridate)
 
-#install.packages('sf')
+install.packages('sf')
 library(sf)
-#install.packages('leaflet')
+install.packages('leaflet')
 library(leaflet)
-#install.packages('mapview')
+install.packages('mapview')
 library(mapview)
 
 #Disable on-the-fly projections
@@ -112,8 +112,10 @@ EPAair.sites <- EPAair %>%
     count_all = n(),
     count_Ozone = sum(!is.na(Ozone)),
     count_PM25 = sum(!is.na(PM2.5)))
-
+view(EPAair.sites)
 #Convert to a spatial dataframe
+#longitude is x and latitude is y
+#crs = coordinate reference system
 EPAair.sf <- EPAair.sites %>% 
   st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'),
            crs=4326)
@@ -135,7 +137,7 @@ sfc_GraingerHall <- st_sfc(sfg_GraingerHall,crs=4326)
 class(sfc_GraingerHall)
 mapview(sfc_GraingerHall)
 
-#Upgrade to a spatial dataframe
+#Upgrade to a spatial dataframe (i.e., add attributes)
 sf_GraingerHall <- st_as_sf(sfc_GraingerHall)
 sf_GraingerHall$Name = 'Grainger Hall'
 mapview(sf_GraingerHall)
@@ -156,6 +158,7 @@ Let's explore:
 "Buffering" a simple feature extends the area outward a specified distance. The code below buffers Grainger Hall 1 "unit". 
 ```{r buffer Grainger hall}
 #Buffer Grainger Hall 1 unit
+#take something and expand by a number (in this case 1); 1 degree in latitude and longitude
 the_buffer <- sf_GraingerHall %>% st_buffer(1)
 
 #View the result
@@ -236,6 +239,7 @@ ggplot() +
   geom_sf(data = GasPlants.utm,color='red',shape='O') 
 
 #Create a distance matrix between the point in each dataset
+#calculate distance between gas stations and air measurements
 distance_matrix <- st_distance(EPAair.sf.utm, GasPlants.utm, pairwise=T)
 
 #Compute the mean of each row (each EPA site)
