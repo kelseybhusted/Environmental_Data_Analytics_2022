@@ -169,7 +169,7 @@ GaringerOzone.monthly <-
   summarise(MeanOzoneConcentration = mean(DailyOzoneConcentration.Clean))
 
 view(GaringerOzone.monthly)
-
+dim(GaringerOzone.monthly)
 ```
 
 
@@ -249,17 +249,21 @@ GaringerOzone.Components <- as.data.frame(GaringerOzone.monthly.decomposed$time.
 view(GaringerOzone.Components)
 
 #add two more columns to my components without the seasonal trend (i.e., Date and observed columns)
+
 GaringerOzone.Components <- mutate(GaringerOzone.Components,
                                    Observed = GaringerOzone.monthly$MeanOzoneConcentration,
                                    Date = GaringerOzone.monthly$Date)
 
+GaringerOzone.Trend.Remainder.Combined <- mutate(GaringerOzone.Components, Nonseasonal = GaringerOzone.Components$trend + GaringerOzone.Components$remainder)
+view(GaringerOzone.Trend.Remainder.Combined)
+
 #16
 #Monthly Non-seasonal time series
-GaringerOzone.nonSeasonal.ts <- ts(GaringerOzone.Components$trend, start = c(2010,1), frequency = 12)
+GaringerOzone.nonSeasonal.ts <- ts(GaringerOzone.Trend.Remainder.Combined$Nonseasonal, start = c(2010,1), frequency = 12)
 head(GaringerOzone.monthly.ts, 10)
 
 #Mann Kendall Non-Seasonal
-MonthlyOzoneTrend <- Kendall::MannKendall(GaringerOzone.monthly.ts)
+MonthlyOzoneTrend <- Kendall::MannKendall(GaringerOzone.nonSeasonal.ts)
 MonthlyOzoneTrend
 summary(MonthlyOzoneTrend)
 #p-value is less than 0.05

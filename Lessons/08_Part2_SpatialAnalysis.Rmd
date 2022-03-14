@@ -42,6 +42,7 @@ The typical set up procedure: confirm the working directory and import libraries
 ```{r setup}
 #Examine the working directory
 getwd()
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #Import libraries
 library(tidyverse)
@@ -49,6 +50,9 @@ library(lubridate)
 library(sf)
 library(mapview)
 library(RColorBrewer)
+
+#Disable on-the-fly projections
+sf::sf_use_s2(FALSE)
 ```
 
 # 2 READING IN SPATIAL DATA
@@ -59,6 +63,8 @@ First, we'll read in our EPA air quality sites, as we did in the previous exerci
 
 ```{r convert.tabular.data.to.sf.object}
 #Read our EPA points into a spatial dataframe
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
+
 epa_pm25_sites_sf <- read_csv('./Data/Raw/EPAair_PM25_NC2018_raw.csv') %>% 
   group_by(`Site Name`, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
   summarize(
@@ -88,6 +94,7 @@ Below we read in the USA counties shapefile, filtering for just the NC features 
 
 ```{r read.filtered.records.from.shapefile.to.sf.object}
 #
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 counties_sf<- st_read('./Data/Spatial/cb_2018_us_county_20m.shp') %>% 
   filter(STATEFP == 37) #Filter for just NC Counties
 
@@ -109,6 +116,7 @@ head(counties_sf)
 
 #Plot the data, colored by area of land in each county
 mapView(counties_sf, zcol = "ALAND")
+
 ```
 
 ### 2.2.2 Read in and explore 8-digit HUC watersheds for NC
@@ -144,8 +152,9 @@ huc8.UpperNeuse_sf <- st_read('./Data/Spatial/NCHUC8.shp') %>%
   filter(SUBBASIN == 'Upper Neuse')
 
 #Create a map
-mapview(huc8.UpperNeuse_sf, col.regions = 'lightblue') +
-  mapview(huc8_sf, col.regions = 'lightgreen')
+mapview(huc8.UpperNeuse_sf, col.regions = 'blue') +
+  mapview(huc8_sf, col.regions = 'red')
+
 
 ```
 
@@ -260,6 +269,9 @@ huc8_sf_wind <- huc8_sf %>%
 
 #View the outputs
 mapview(huc8_sf_wind, zcol = 'kWhkm2day')
+
+ggplot() +
+  geom_sf(data = huc8_sf_wind, aes(col = 'kWhkm2day'))
 
 
 ```
