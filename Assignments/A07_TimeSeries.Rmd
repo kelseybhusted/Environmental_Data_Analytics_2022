@@ -210,6 +210,7 @@ plot(GaringerOzone.monthly.decomposed)
 MonthlyOzoneTrend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 MonthlyOzoneTrend
 summary(MonthlyOzoneTrend)
+#p-value = 0.046724
 #p-value is less than 0.05
 #the null hypothesis of the test (i.e., Seasonal Mann Kendall) states that the data is stationary
 #reject null hypothesis and we state that there is a trend
@@ -263,12 +264,13 @@ GaringerOzone.nonSeasonal.ts <- ts(GaringerOzone.Trend.Remainder.Combined$Nonsea
 head(GaringerOzone.monthly.ts, 10)
 
 #Mann Kendall Non-Seasonal
-MonthlyOzoneTrend <- Kendall::MannKendall(GaringerOzone.nonSeasonal.ts)
-MonthlyOzoneTrend
-summary(MonthlyOzoneTrend)
+MonthlyOzoneTrend.Nonseasonal <- Kendall::MannKendall(GaringerOzone.nonSeasonal.ts)
+MonthlyOzoneTrend.Nonseasonal
+summary(MonthlyOzoneTrend.Nonseasonal)
+#p-value = 0.0075402
 #p-value is less than 0.05
 #the null hypothesis of the test (i.e., Seasonal Mann Kendall) states that the data is stationary
 #reject null hypothesis and we state that there is a trend
 ```
 
-> Answer: The results derived from the non-seasonal and seasonal time series are the same with respect to the tau and p-value (i.e., p-value = 0.33732). Furthremore, the monotonic trend remains the same/constant even with the seasonal component excluded.
+> Answer: The results derived from the non-seasonal and seasonal time series both have p-values that are less than 0.05 which indicates that the data is not stationary. Moreover, the null hypothesis is rejected for both seasonal and non-seasonal Mann Kendall tests indicating the presence of a trend (Non-seasonal p-value = 0.0075402; Seasonal p-value = 0.046724)
