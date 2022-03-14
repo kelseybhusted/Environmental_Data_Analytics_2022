@@ -394,6 +394,7 @@ mapview(neuse_counties_sf, zcol='Area_m2')
 #Select the Triangle County from the 
 the_triangle <- counties_sf_utm %>%
   filter(NAME %in% c("Chatham", "Durham", "Orange", "Wake"))
+mapview(the_triangle)
   
 #Grab the intersecting HUC_8s
 the_hucs <- huc8_sf_utm[the_triangle,]
