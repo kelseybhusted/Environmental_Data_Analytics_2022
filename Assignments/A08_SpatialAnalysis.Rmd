@@ -1,11 +1,14 @@
 ---
-title: "Assignment 9: Spatial Analysis in R"
+title: 'Assignment 9: Spatial Analysis in R'
 author: "Kelsey Husted"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 geometry: margin=2.54cm
-editor_options: 
+editor_options:
   chunk_output_type: inline
-  markdown: 
+  markdown:
     wrap: 72
 ---
 
@@ -31,6 +34,7 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 ```{r Prepare workspace}
 #1.
 getwd()
+setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #2. 
 library(tidyverse, quietly = TRUE)
@@ -53,7 +57,7 @@ In this exercise, we will be exploring stream gage height data in Nebraska corre
 
 ```{r Read the county data into an sf dataframe}
 #working directing keeps resetting to the 'Assignments' folder so I have to reset it in each code chunk 
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
+#setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #3. Read in Counties shapefile into an sf dataframe, filtering for just NE counties
 NE_counties_sf <- st_read('./Data/Spatial/cb_2018_us_county_20m.shp') %>%
@@ -82,7 +86,6 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 8. Display the column names of this dataset.
 
 ```{r Read in USGS Gage Locations}
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #7. Read in gage locations csv as a dataframe
 NWIS.GageLocation <- read.csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv", stringsAsFactors = TRUE)
@@ -107,7 +110,6 @@ colnames(NWIS.GageLocation)
 11. Display the column names of the resulting sf dataframe
 
 ```{r Convert dataframe to sf dataframe}
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #10. Convert to an sf object
 #Convert to a spatial dataframe
@@ -136,7 +138,6 @@ colnames(NWIS.GageLocation.sf )
  * Subtitle your plot with your name
 
 ```{r Plot the spatial features}
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
 
 #13. Plot the gage locations atop the county features
 ggplot() +
@@ -161,7 +162,7 @@ Lastly, we want to attach some gage height data to our site locations. I've cons
 18. Show the dimensions of the resulting joined dataframe
 
 ```{r}
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
+
 
 #14. Read the site flow data into a data frame
 NWIS.SiteFlow <- read.csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv",
@@ -173,7 +174,7 @@ view(NWIS.SiteFlow)
 
 #16. Join location data to it
 NWIS.SiteFlow.join <- NWIS.GageLocation.sf %>%
-  left_join(NWIS.SiteFlow, by = c("site_no" = "site_no"))
+  inner_join(NWIS.SiteFlow, by = c("site_no" = "site_no"))
 view(NWIS.SiteFlow.join)
 
 #17. Show the column names of the joined dataset
@@ -192,21 +193,13 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
  * Show the magnitude of gage height by color, shape, other visualization technique.
 
 ```{r}
-setwd("/Users/kelseyhusted 1/Desktop/Data Analytics/Environmental_Data_Analytics_2022")
-
 #19
 #Map the points, sized by gage height
-
 #mapview version
 mapview(NE_counties_sf, col.regions = 'skyblue') +
   mapview(NWIS.SiteFlow.join, zcol = 'gage_ht', cex = 'gage_ht')
 
-#ggplot version
-ggplot() +
-  geom_sf(data = NE_counties_sf) +
-  geom_sf(data = NWIS.SiteFlow.join, aes(size='gage_ht'))
 
-#https://stackoverflow.com/questions/63351058/geom-sf-and-geom-point-how-to-assign-colors-based-on-the-points-inserted-on-the
 ```
 
 ---
@@ -226,11 +219,12 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 #20 Transform the counties and gage location datasets to UTM Zone 14
 NE_counties_sf.utm <- st_transform(NE_counties_sf,32614)
 NWIS.GageHeightLocation.utm <- st_transform(NWIS.SiteFlow.join,32614)
+view(NWIS.GageHeightLocation.utm)
 
-#21 Plot the data
+#21 Plot the data different colors; counties = blue and gage location = green
 ggplot() +
-  geom_sf(data = NE_counties_sf.utm, color = 'blue') +
-  geom_sf(data = NWIS.GageHeightLocation.utm, zcol = 'gage_ht', shape = 'O')
+  geom_sf(data = NE_counties_sf.utm, fill = 'lightgreen') +
+  geom_sf(data = NWIS.GageHeightLocation.utm, aes(color = gage_ht, alpha = 0.9, size = gage_ht))
 
 ```
 
@@ -259,7 +253,7 @@ Lancaster.GageLocations <- NWIS.GageLocation.sf[LancasterCounty,]
 #24 Plot
 ggplot() +
   geom_sf(data = NE_counties_sf, color = 'blue') +
-  geom_sf(data = LancasterCounty, fill = 'green') +
+  geom_sf(data = LancasterCounty, fill = 'lightgreen') +
   geom_sf(data = Lancaster.GageLocations, shape = 'O')
 
 ```
