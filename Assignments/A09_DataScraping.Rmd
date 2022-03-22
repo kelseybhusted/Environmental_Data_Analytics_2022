@@ -30,7 +30,19 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 
 ```{r, message = FALSE}
 #1
+#set wd, load packages, set ggplot theme
+getwd()
 
+library(tidyverse)
+library(rvest)
+
+#theme
+#set theme
+my_theme1 <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "bottom", legend.text=element_text(size=8), legend.title=element_text(size=10), panel.background = element_rect(fill = "aliceblue"), panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"))
+#set theme default
+theme_set(my_theme1)
 
 ```
 
@@ -45,7 +57,9 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 
 ```{r set.the.scraping.website}
 #2
-
+#Fetch the web resources from the URL for 2020
+webpage <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2020')
+webpage
 
 ```
 
@@ -65,10 +79,19 @@ In the code chunk below scrape these values, assigning them to three separate va
 
 ```{r scrape.the.data}
 #3
-water.system.name <- 
-pswid <- 
-ownership <- 
-max.withdrawals.mgd <- 
+water.system.name <- webpage %>% html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
+water.system.name
+
+pswid <- webpage %>% html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
+pswid
+
+ownership <- webpage %>% html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
+ownership
+
+max.withdrawals.mgd <- webpage %>% html_nodes("th~ td+ td") %>% html_text()
+max.withdrawals.mgd
+
+the_year <- 
 
 ```
 
@@ -83,12 +106,27 @@ max.withdrawals.mgd <-
 
 ```{r create.a.dataframe.from.scraped.data}
 #4
-
-
-
+df <- data.frame(
+  "Month" = rep(1:12),
+  "Year" = rep(2020, 12),
+  "Max.Withdrawals.mgd" = as.numeric(max.withdrawals.mgd),
+  "Water.System.Name" = water.system.name,
+  "PWSID" = pswid,
+  "Ownership" = ownership) %>%
+  mutate(Date = my(paste(Month,"-",Year))) 
+#just rearranging columns
+df <- df %>%
+  select(Month, Year, Date, Water.System.Name, PWSID, Ownership, Max.Withdrawals.mgd)
+view(df)
+  
 #5
-
-
+#Plot the max daily withdrawals across the months for 2020
+ggplot(df, aes(x = Month, y = Max.Withdrawals.mgd)) +
+  geom_line() +
+  geom_smooth(method="loess",se=FALSE) +
+  #FIX THIS
+  ylabs = "Max Monthly Withdrawals (mgd)") +
+  labs(title = "2020 Water Usage Data")
 
 ```
 
