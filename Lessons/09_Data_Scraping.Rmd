@@ -95,6 +95,7 @@ With this id known, we can extract it's value in a two-step process. First we us
 ```{r scrape.some.data}
 the_registrant <- webpage %>% 
   html_nodes(".table tr:nth-child(1) td:nth-child(2)") %>% 
+  #give me the text associated with that node (html_text)
   html_text()
 the_registrant
 ```
@@ -127,6 +128,7 @@ max_withdrawals <- webpage %>%
   html_nodes('.table:nth-child(7) td:nth-child(8) , .table:nth-child(7) td:nth-child(4)') %>%
   html_text()
 max_withdrawals
+
 ```
 
 
@@ -325,6 +327,7 @@ This website gives a nice example of this: <https://dcl-prog.stanford.edu/purrr-
 ```{r Scrape.all.2020.data}
 
 #Subset the facilities
+#randomly grab 20 sites
 the_facility_ids_subset <-  sample(the_facility_ids,20)
 
 #Create a list of the year we want, the same length as the vector above
@@ -349,6 +352,7 @@ To scrape for both years and sites, we need to dig deeper into Purrr's map funct
 
 ```{r}
 #Create a subset of facilities
+#randomly grab 3 sites
 the_facilities <- sample(the_facility_ids,3)
 the_years = c(2018,2019,2020)
 
