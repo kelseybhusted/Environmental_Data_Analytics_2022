@@ -1,6 +1,6 @@
 ---
 title: "Assignment 09: Data Scraping"
-author: "Student Name"
+author: "Kelsey Husted"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -35,6 +35,7 @@ getwd()
 
 library(tidyverse)
 library(rvest)
+library(lubridate)
 
 #theme
 #set theme
@@ -82,16 +83,14 @@ In the code chunk below scrape these values, assigning them to three separate va
 water.system.name <- webpage %>% html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
 water.system.name
 
-pswid <- webpage %>% html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
-pswid
+pwsid <- webpage %>% html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
+pwsid
 
 ownership <- webpage %>% html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
 ownership
 
 max.withdrawals.mgd <- webpage %>% html_nodes("th~ td+ td") %>% html_text()
 max.withdrawals.mgd
-
-the_year <- 
 
 ```
 
@@ -106,27 +105,29 @@ the_year <-
 
 ```{r create.a.dataframe.from.scraped.data}
 #4
+#creating 'out-of-order' month vector to match max-withdrawal values
+month.max.withdrawals <- c("Jan", "May", "Sep", "Feb", "June", "Oct", "March", "July", "Nov", "April", "Aug", "Dec")
+
 df <- data.frame(
-  "Month" = rep(1:12),
+  "Month" = month.max.withdrawals,
+  "month" = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12),
   "Year" = rep(2020, 12),
   "Max.Withdrawals.mgd" = as.numeric(max.withdrawals.mgd),
   "Water.System.Name" = water.system.name,
-  "PWSID" = pswid,
+  "PWSID" = pwsid,
   "Ownership" = ownership) %>%
-  mutate(Date = my(paste(Month,"-",Year))) 
-#just rearranging columns
-df <- df %>%
-  select(Month, Year, Date, Water.System.Name, PWSID, Ownership, Max.Withdrawals.mgd)
-view(df)
+  mutate(Date = my(paste0(month,"-",Year))) 
+
   
 #5
 #Plot the max daily withdrawals across the months for 2020
-ggplot(df, aes(x = Month, y = Max.Withdrawals.mgd)) +
+ggplot(df, aes(x = Date, y = Max.Withdrawals.mgd)) +
   geom_line() +
   geom_smooth(method="loess",se=FALSE) +
-  #FIX THIS
-  ylabs = "Max Monthly Withdrawals (mgd)") +
-  labs(title = "2020 Water Usage Data")
+  ylab("Max Monthly Withdrawals (mgd)") +
+  labs(title = "2020 Durham Water Usage Data") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_date(date_labels="%b, %Y", date_breaks="1 month")
 
 ```
 
@@ -134,25 +135,78 @@ ggplot(df, aes(x = Month, y = Max.Withdrawals.mgd)) +
 
 ```{r construct.a.scraping.function}
 #6.
+scrape.it <- function(the_year, PWSID){
+  
+  #Retrieve website
+  the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=', PWSID, '&year=', the_year))
+  
+  #Scrape the data
+  water.system.name <- the_website %>% html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
+  pwsid <- the_website %>% html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
+  ownership <- the_website %>% html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
+  max.withdrawals.mgd <- the_website %>% html_nodes("th~ td+ td") %>% html_text()
+  
+  #Convert to a dataframe
+  df.maxwithdrawals <- tibble(
+  "Month" = month.max.withdrawals,
+  "month" = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12),
+  "Year" = rep(the_year, 12),
+  "Max.Withdrawals.mgd" = as.numeric(max.withdrawals.mgd),
+  "Water.System.Name" = water.system.name,
+  "PWSID" = pwsid,
+  "Ownership" = ownership) %>%
+  mutate(Date = my(paste0(month,"-",Year))) 
+  
+  #Return the dataframe
+  return(df.maxwithdrawals)
+}
 
+#Run the function to test
+df.functions <- scrape.it(2015, '03-32-010')
+view(df.functions)
 
-
+  
 ```
+
 
 7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2015
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7
-
-
+view(df.functions)
+ggplot(df.functions, aes(x = Date, y = Max.Withdrawals.mgd, group = 1)) +
+  geom_line() +
+  geom_smooth(method="loess",se=FALSE, color = "purple") +
+  ylab("Max Monthly Withdrawals (mgd)") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_date(date_labels="%b, %Y", date_breaks="1 month") +
+  labs(title = paste("2015 Water Usage Data"),
+       subtitle = water.system.name)
+                     
 ```
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares the Asheville to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Durham.2015.data}
 #8
+#extracting 2015 Asheville info
+df.functions.Asheville <- scrape.it(2015, '01-11-010')
+view(df.functions.Asheville)
 
+#Combine data
+# merge two data frames by 
+Combined <- rbind(df.functions.Asheville, df.functions)
+view(Combined)
 
+#plot
+ggplot(Combined, aes(x = Date, y = Max.Withdrawals.mgd, color = Water.System.Name, group =Water.System.Name)) +
+  ylab("Max Monthly Withdrawals (mgd)") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_date(date_labels="%b, %Y", date_breaks="1 month") +
+  labs(title = paste("2015 Water Usage Data")) +
+  legend(legend = c("Durham", "Asheville"))
+  geom_line()
+  
 ```
 
 
@@ -160,7 +214,29 @@ ggplot(df, aes(x = Month, y = Max.Withdrawals.mgd)) +
 
 ```{r}
 #9
+#scrape years from 2010-2019
+the_years = rep(2010:2019)
+PWSID.Ash = '01-11-010'
 
+#purrr's map function
+the_dfs <- map(the_years,scrape.it,pwsidAsh=PWSID.Ash)
+
+the_dfs <- lapply(X = the_years,
+                  FUN = scrape.it,
+                  pwsid = PWSID.Ash)
+
+
+
+#Use lapply to apply the scrape function
+the_dfs <- lapply(X = the_years,
+                  FUN = scrape.it,
+                  the_facility=my_facility)
+
+#OR, use purrr's map function
+the_dfs <- map(the_years,scrape.it,the_facility=my_facility)
+
+#Conflate the returned dataframes into a single dataframe
+the_df <- bind_rows(the_dfs)
 
 ```
 
