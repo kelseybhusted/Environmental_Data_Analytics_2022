@@ -204,7 +204,7 @@ ggplot(Combined, aes(x = Date, y = Max.Withdrawals.mgd, color = Water.System.Nam
   theme(axis.text.x = element_text(angle = 90)) +
   scale_x_date(date_labels="%b, %Y", date_breaks="1 month") +
   labs(title = paste("2015 Water Usage Data")) +
-  legend(legend = c("Durham", "Asheville"))
+  #legend(legend = c("Durham", "Asheville"))
   geom_line()
   
 ```
@@ -219,25 +219,19 @@ the_years = rep(2010:2019)
 PWSID.Ash = '01-11-010'
 
 #purrr's map function
-the_dfs <- map(the_years,scrape.it,pwsidAsh=PWSID.Ash)
-
-the_dfs <- lapply(X = the_years,
-                  FUN = scrape.it,
-                  pwsid = PWSID.Ash)
-
-
-
-#Use lapply to apply the scrape function
-the_dfs <- lapply(X = the_years,
-                  FUN = scrape.it,
-                  the_facility=my_facility)
-
-#OR, use purrr's map function
-the_dfs <- map(the_years,scrape.it,the_facility=my_facility)
+the_dfs <- map(the_years, scrape.it,PWSID.Ash)
 
 #Conflate the returned dataframes into a single dataframe
-the_df <- bind_rows(the_dfs)
+the_dfs <- bind_rows(the_dfs)
+
+#Plot
+ggplot(the_dfs,aes(x=Date,y=Max.Withdrawals.mgd)) + 
+  geom_line() + 
+  geom_smooth(method="loess",se=FALSE) +
+  labs(title = paste("2020 Water Usage Data for Asheville"),
+       subtitle = PWSID.Ash)
 
 ```
 
->Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
+>Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time? 
+Answer: A noticeable nonlinear trend is present when looking at the plot. Furthermore, Ashvilles's max water withdrawals increases with time from 2019 to 2020. 

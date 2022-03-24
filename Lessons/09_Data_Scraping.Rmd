@@ -277,7 +277,7 @@ the_dfs <- lapply(X = the_years,
 the_dfs <- map(the_years,scrape.it,the_facility=my_facility)
 
 #Conflate the returned dataframes into a single dataframe
-the_df <- bind_rows(the_dfs)
+the_dfs <- bind_rows(the_dfs)
 
 #Plot, because it's fun and rewarding
 ggplot(the_df,aes(x=Date,y=Avg_Withdrawals_mgd)) + 
