@@ -36,6 +36,9 @@ getwd()
 library(tidyverse)
 library(rvest)
 library(lubridate)
+library(knitr)
+
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 #theme
 #set theme
@@ -187,7 +190,7 @@ ggplot(df.functions, aes(x = Date, y = Max.Withdrawals.mgd, group = 1)) +
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares the Asheville to Durham's water withdrawals.
 
-```{r fetch.and.plot.Durham.2015.data}
+```{r fetch.and.plot.Asheville.2015.data}
 #8
 #extracting 2015 Asheville info
 df.functions.Asheville <- scrape.it(2015, '01-11-010')
